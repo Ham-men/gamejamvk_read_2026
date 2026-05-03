@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Остров потерянных мелодий</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        #reading-text-area .keyword.caught {
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+            text-decoration: line-through;
+            font-weight: 600;
+        }
+        #reading-text-area .word-read {
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            text-decoration: line-through;
+            font-weight: 600;
+        }
+        #reading-text-area .line-read {
+            color: #888;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="hud">
+            <div id="hud-top">
+                <div id="level-title"></div>
+                <div id="hud-buttons">
+                    <button id="btn-stop" class="hud-btn">⏹ Стоп</button>
+                </div>
+            </div>
+            <div id="hud-progress">
+                <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
+                <span id="progress-text"></span>
+            </div>
+        </div>
+
+        <div id="chik">
+            <div id="chik-avatar"></div>
+            <div id="chik-bubble"><span id="chik-text"></span></div>
+        </div>
+
+        <div id="side-panel" class="side-panel closed">
+            <div id="panel-header">
+                <h2 id="panel-title"></h2>
+                <button id="panel-close" class="panel-close-btn">✕</button>
+            </div>
+            <div id="panel-instruction"></div>
+
+            <div id="reading-section" class="panel-section hidden">
+                <div id="reading-text-area"></div>
+                <div id="reading-keywords"></div>
+                <div id="reading-status"></div>
+                <div class="panel-controls">
+                    <button id="reading-start" class="btn-primary">🎤 Начать</button>
+                    <button id="reading-stop" class="btn-secondary">Дальше</button>
+                </div>
+            </div>
+
+            <div id="singing-section" class="panel-section hidden">
+                <canvas id="singCanvas"></canvas>
+                <div id="singing-info">
+                    <div class="stat">🎵 Поёшь: <span id="noteDisplay">--</span></div>
+                    <div class="stat">📡 <span id="freqDisplay">--</span> Гц</div>
+                </div>
+                <div class="panel-controls">
+                    <button id="singing-start" class="btn-primary">🎤 Начать петь</button>
+                    <button id="singing-stop" class="btn-secondary">Стоп</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-overlay" class="game-overlay">
+            <div class="overlay-box menu-box">
+                <h1 class="game-title">🏝️ Остров потерянных мелодий</h1>
+                <p class="game-subtitle">Помоги Чику вернуть музыку и сказки на остров!</p>
+                <div id="level-grid"></div>
+                <div class="menu-footer">
+                    <p class="menu-hint">Выбери уровень и нажми «Начать»</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="book-overlay" class="game-overlay hidden">
+            <div class="overlay-box book-box">
+                <h2 class="book-title">📚 Выбери сказку</h2>
+                <p class="book-subtitle">Какую историю будем читать?</p>
+                <div id="book-grid"></div>
+                <div class="overlay-controls">
+                    <button id="book-start" class="btn-primary">Читать сказку</button>
+                    <button id="book-skip" class="btn-secondary">Без сказки</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="level-complete-overlay" class="game-overlay hidden">
+            <div class="overlay-box complete-box">
+                <h2 id="complete-title">Уровень пройден!</h2>
+                <p id="complete-text"></p>
+                <div id="complete-stars"></div>
+                <div class="overlay-controls">
+                    <button id="complete-next" class="btn-primary">Следующий уровень</button>
+                    <button id="complete-menu" class="btn-secondary">В меню</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="dialog-overlay" class="game-overlay hidden">
+            <div class="overlay-box dialog-box">
+                <h2 id="dialog-title"></h2>
+                <div id="dialog-content"></div>
+                <div class="overlay-controls">
+                    <button id="dialog-next" class="btn-primary">Далее</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/books2.js"></script>
+    <script src="js/sprites.js"></script>
+    <script src="js/reading.js"></script>
+    <script src="js/singing.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
