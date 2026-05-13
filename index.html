@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
@@ -24,6 +24,30 @@
             text-decoration: line-through;
             opacity: 0.7;
         }
+    
+        #btn-camera {
+            transition: background 0.3s, color 0.3s;
+        }
+        #btn-camera.camera-on {
+            background: #4CAF50;
+            color: white;
+        }
+        #btn-camera.camera-off {
+            background: #666;
+            color: #aaa;
+        }
+    
+        #btn-camera {
+            transition: background 0.3s, color 0.3s;
+        }
+        #btn-camera.camera-on {
+            background: #4CAF50;
+            color: white;
+        }
+        #btn-camera.camera-off {
+            background: #666;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -32,15 +56,15 @@
 
         <div id="hud">
             <div id="hud-top">
-                <div id="level-title"></div>
-                <div id="hud-buttons">
-                    <button id="btn-stop" class="hud-btn">⏹ Стоп</button>
-                </div>
+                <button id="btn-stop" class="hud-btn">? ⮯</button>
+                <button id="btn-camera" class="hud-btn camera-off">📷 камера</button>
             </div>
+            <div id="level-title"></div>
             <div id="hud-progress">
                 <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
                 <span id="progress-text"></span>
             </div>
+            <div id="hud-coins"><img src="files/32яйцо.svg" style="width:20px;height:20px;vertical-align:middle;"> <span id="coin-count">0</span></div>
         </div>
 
         <div id="chik">
@@ -56,9 +80,22 @@
             <div id="panel-instruction"></div>
 
             <div id="reading-section" class="panel-section hidden">
+                <div class="reading-header">
+                    <span>📖 Текст сказки</span>
+                    <button id="debug-toggle-btn" class="debug-toggle-btn" title="Показать/скрыть расшифровку речи">📝</button>
+                </div>
                 <div id="reading-text-area"></div>
                 <div id="reading-keywords"></div>
                 <div id="reading-status"></div>
+                <div id="debug-panel" class="debug-panel hidden">
+                    <div class="debug-header">
+                        <span>🎤 Распознано микрофоном:</span>
+                        <div>
+                            <button id="debug-clear" class="debug-clear-btn" title="Очистить">✕</button>
+                        </div>
+                    </div>
+                    <div id="debug-text" class="debug-text"></div>
+                </div>
                 <div class="panel-controls">
                     <button id="reading-start" class="btn-primary">🎤 Начать</button>
                     <button id="reading-stop" class="btn-secondary">Дальше</button>
@@ -76,27 +113,60 @@
                     <button id="singing-stop" class="btn-secondary">Стоп</button>
                 </div>
             </div>
-        </div>
 
-        <div id="menu-overlay" class="game-overlay">
-            <div class="overlay-box menu-box">
-                <h1 class="game-title">🏝️ Остров потерянных мелодий</h1>
-                <p class="game-subtitle">Помоги Чику вернуть музыку и сказки на остров!</p>
-                <div id="level-grid"></div>
-                <div class="menu-footer">
-                    <p class="menu-hint">Выбери уровень и нажми «Начать»</p>
+            <div id="blowing-section" class="panel-section hidden">
+                <div id="blowing-status"></div>
+                <div id="blowing-debug" class="blowing-debug hidden">
+                    <div class="debug-header">
+                        <span>🛠 Отладка дутья</span>
+                    </div>
+                    <div class="debug-row">
+                        <span class="debug-label">Чувствительность</span>
+                        <input type="range" id="blow-sensitivity" class="debug-slider" min="0" max="100" value="35">
+                        <span id="blow-sensitivity-val" class="debug-val">0.035</span>
+                    </div>
+                    <div class="debug-row">
+                        <span class="debug-label">Множитель</span>
+                        <input type="range" id="blow-multiplier" class="debug-slider" min="0" max="200" value="100">
+                        <span id="blow-multiplier-val" class="debug-val">1.00</span>
+                    </div>
+                    <div class="debug-row">
+                        <span class="debug-label">Сила</span>
+                        <div class="blow-meter"><div id="blow-meter-fill" class="blow-meter-fill"></div></div>
+                        <span id="blow-meter-val" class="debug-val">0.00</span>
+                    </div>
+                    <div class="debug-row">
+                        <button id="blow-simulate" class="btn-secondary" style="flex:1;font-size:12px;padding:4px 8px;">🌀 Имитировать</button>
+                        <button id="blow-debug-toggle" class="debug-toggle-btn" style="font-size:11px;">🛠</button>
+                    </div>
+                </div>
+                <div class="panel-controls">
+                    <button id="blowing-start" class="btn-primary">💨 Начать дуть</button>
+                    <button id="blowing-stop" class="btn-secondary">Далее</button>
                 </div>
             </div>
         </div>
 
-        <div id="book-overlay" class="game-overlay hidden">
-            <div class="overlay-box book-box">
-                <h2 class="book-title">📚 Выбери сказку</h2>
-                <p class="book-subtitle">Какую историю будем читать?</p>
-                <div id="book-grid"></div>
-                <div class="overlay-controls">
-                    <button id="book-start" class="btn-primary">Читать сказку</button>
-                    <button id="book-skip" class="btn-secondary">Без сказки</button>
+        <div id="menu-overlay" class="game-overlay">
+            <div class="overlay-box menu-box wide">
+                <div id="menu-columns">
+                    <div id="menu-left" class="menu-col">
+                        <h1 class="game-title">🏝️ Остров потерянных мелодий</h1>
+                        <p class="game-subtitle">Помоги Чику вернуть музыку и сказки на остров!</p>
+                        <h3 class="menu-section-title">📚 Выбери сказку</h3>
+                        <div id="book-grid"></div>
+                        <div class="overlay-controls" style="margin-top:12px;">
+                            <button id="book-start" class="btn-primary">Читать сказку</button>
+                        </div>
+                    </div>
+                    <div id="menu-right" class="menu-col">
+                        <h3 class="menu-section-title">🎨 Редактор аватара</h3>
+                        <div id="avatar-coins" class="avatar-coins"><img src="files/32яйцо.svg" style="width:22px;height:22px;vertical-align:middle;"> <span id="avatar-coin-count">0</span></div>
+                        <div id="avatar-preview-wrap">
+                            <canvas id="avatar-preview" width="160" height="180"></canvas>
+                        </div>
+                        <div id="avatar-slots"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,12 +194,15 @@
         </div>
     </div>
 
+    <script src="js/camera.js"></script>
+    <script src="js/avatar.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/audio.js"></script>
     <script src="js/books2.js"></script>
     <script src="js/sprites.js"></script>
     <script src="js/reading.js"></script>
     <script src="js/singing.js"></script>
+    <script src="js/blowing.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

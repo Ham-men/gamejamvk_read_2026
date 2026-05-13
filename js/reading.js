@@ -9,15 +9,22 @@ var markedWords = [];
 var allWordsInPart = [];
 var progressCallback = null;
 var onPartCompleteCallback = null;
+var onTranscriptCallback = null;
 var partCompleted = false;
 var readLines = [];
 var recognitionStarting = false;
+var accumulatedTranscript = '';
 
 function resetState() {
     markedWords = [];
     partCompleted = false;
     allWordsInPart = [];
     readLines = [];
+}
+
+function clearTranscript() {
+    accumulatedTranscript = '';
+    if (onTranscriptCallback) onTranscriptCallback('');
 }
 
 function setupRecognition() {
@@ -36,6 +43,10 @@ function setupRecognition() {
         var last = event.results[event.results.length - 1];
         var transcript = last[0].transcript.toLowerCase().trim();
         
+        if (accumulatedTranscript) accumulatedTranscript += ' ';
+        accumulatedTranscript += transcript;
+        if (onTranscriptCallback) onTranscriptCallback(accumulatedTranscript);
+        
         var normalizedTranscript = transcript.replace(/ё/g, 'е');
         
         if (currentBook && currentBook.triggerSprites) {
@@ -46,9 +57,8 @@ function setupRecognition() {
                 var normalizedWord = word.toLowerCase().replace(/ё/g, 'е');
                 if (normalizedTranscript.indexOf(normalizedWord) !== -1) {
                     if (SpriteRenderer && SpriteRenderer.spawnAtGround) {
-                        SpriteRenderer.spawnAtGround(sprite);
+                        SpriteRenderer.spawnAtGround(sprite, word, currentBook);
                     }
-                    break;
                 }
             }
         }
@@ -68,7 +78,6 @@ function setupRecognition() {
             var normalizedKw = kw.toLowerCase().replace(/ё/g, 'е');
             if (normalizedTranscript.indexOf(normalizedKw) !== -1) {
                 if (onKeywordCaught) onKeywordCaught(kw);
-                break;
             }
         }
 
@@ -230,5 +239,7 @@ window.readingModule = {
         updateTextDisplay();
     },
     setProgressCallback: function(callback) { progressCallback = callback; },
-    setPartCompleteCallback: function(callback) { onPartCompleteCallback = callback; }
+    setPartCompleteCallback: function(callback) { onPartCompleteCallback = callback; },
+    setTranscriptCallback: function(callback) { onTranscriptCallback = callback; },
+    clearTranscript: clearTranscript
 };
